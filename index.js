@@ -1,0 +1,37 @@
+const path = require("path")
+const { firefox } = require("playwright-firefox");
+const { chromium } = require("playwright-chromium");
+const { webkit } = require("playwright-webkit");
+
+(async () => {
+    // const browser = await firefox.launch({ headless: false })
+    // const browser = await chromium.launch({ headless: false })
+    const browser = await webkit.launch({ headless: false })
+    const context = await browser.newContext()
+    context.setDefaultTimeout(9999999)
+    const page = await context.newPage()
+
+    await page.goto(`file:${path.join(__dirname, "index.html")}`)
+    console.log("FIREFOX not outputting this")
+
+    const question = await page.$("h6[id^='1']")
+    const {x: xStart, y: yStart, width: widthStart} = await question.boundingBox()
+
+    const limit = await page.$("h6[id^='2']")
+    const {x: xEnd, y: yEnd} = await limit.boundingBox()
+
+    const heightCalc = yEnd - yStart
+    const heightCalc2 = (yEnd - yStart) * 2
+    console.log(yStart, yEnd, heightCalc)
+    await page.screenshot({
+        clip: {
+            x: xStart,
+            y: yStart,
+            width: widthStart,
+            height: 1000,
+        },
+        path: "./webkit.png",
+    })
+    console.log("FINISH")
+    await browser.close()
+})()
