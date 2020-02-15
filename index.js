@@ -4,14 +4,14 @@ const { chromium } = require("playwright-chromium");
 const { webkit } = require("playwright-webkit");
 
 (async () => {
-    // const browser = await firefox.launch({ headless: false })
+    const browser = await firefox.launch({ headless: false })
     // const browser = await chromium.launch({ headless: false })
-    const browser = await webkit.launch({ headless: false })
+    // const browser = await webkit.launch({ headless: false })
     const context = await browser.newContext()
     context.setDefaultTimeout(9999999)
     const page = await context.newPage()
 
-    await page.goto(`file:${path.join(__dirname, "index.html")}`)
+    await page.goto(`file:${path.join(__dirname, "index.html")}`) // 2. firefox not resolving page.goto file:
     console.log("FIREFOX not outputting this")
 
     const question = await page.$("h6[id^='1']")
@@ -28,8 +28,9 @@ const { webkit } = require("playwright-webkit");
             x: xStart,
             y: yStart,
             width: widthStart,
-            height: 1000,
+            height: 1000, // 2. chromium and webkit not using the height here
         },
+        // path: "./chromium.png",
         path: "./webkit.png",
     })
     console.log("FINISH")
